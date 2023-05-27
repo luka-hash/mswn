@@ -1,0 +1,41 @@
+data:text/html,
+<html contenteditable>
+<title>notepad</title>
+<style>
+	html {
+		font-family: monospace;
+	}
+</style>
+<script>
+	// Copyright (c) 2023 Luka Ivanovic
+	// This code is licensed under MIT licence (see LICENCE for details)
+	const a = document.createElement('a');
+	a.target = '_blank';
+	a.style.display = 'none';
+	document.onkeydown = (e) => {
+		if (e.keyCode === 9) { // tab
+			e.preventDefault();
+			editor = document.body.ownerDocument.defaultView;
+			sel = editor.getSelection().getRangeAt(0);
+			tab = document.createTextNode("\u00a0\u00a0\u00a0\u00a0");
+			sel.insertNode(tab);
+			sel.setStartAfter(tab);
+			sel.setEndAfter(tab);
+			editor.getSelection().removeAllRanges();
+			editor.getSelection().addRange(sel);
+		} else if (e.ctrlKey && e.key === 's') {
+			e.preventDefault();
+			file = new Blob(
+				[document.body.outerText],
+				{ type: 'text/plain' }
+			);
+			url = window.URL.createObjectURL(file);
+			a.href = url;
+			a.download = 'note-' + String(Math.round(Math.random() * 10000)) + '.txt';
+			a.click();
+			window.URL.revokeObjectURL(url)
+		}
+	}
+</script>
+
+</html>
